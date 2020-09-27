@@ -1,0 +1,19 @@
+##Unbedingt:
+
+Moll akkorde in kleinbuchstaben und mit m akzeptieren.
+Akkorde entsprechend konvertieren, sodass die Ausgabe ein konfigurierbares durchgehendes Schema hat.
+
+@info: -Blocke implementieren
+
+BUG: Mehrere Akkorde über einem Wort -> Leadsheets issues
+## Wichtig
+
+## Wäre schön
+
+Daten aus der Konkordanz von "Zeitreisender" verwenden, fehlende Information damit auffüllen.
+
+## Verrückte Idee
+
+Bilder mit angeben und unter das lied setzen, wenn genug Platz ist
+
+
