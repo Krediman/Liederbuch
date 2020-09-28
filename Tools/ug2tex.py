@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys, re
 
-legit_chords = ["A","B","H","C","C#","D","C#","E","F","F#","G","G#"]
+legit_chords = ["A","B","H","C","C#","D","D#","E","F","F#","G","G#"]
 legit_chords += [chord+"m" for chord in legit_chords]
 legit_chords += ["Cadd9","Dsus4","Dsus2"]
 
