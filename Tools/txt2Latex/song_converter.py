@@ -58,14 +58,14 @@ class laTexttype(texttype):
         self._updateWD()
         for i in range(len(self.str)):
             line = self.str[i]
-            if re.match(laTexttype.refrainregex, line) is not None:
-                self.blocktyp = "refrain"
+            if re.match(CHORUSREGEX, line, re.IGNORECASE) is not None:
+                self.blocktyp = 'chorus'
                 return i
-            elif re.match(laTexttype.verseregex, line) is not None:
-                self.blocktyp = "verse"
+            elif re.match(VERSEREGEX, line, re.IGNORECASE) is not None:
+                self.blocktyp = 'verse'
                 return i
-            elif re.match(laTexttype.inforegex, line) is not None:
-                self.blocktyp = "info"
+            elif re.match(INFOREGEX, line, re.IGNORECASE) is not None:
+                self.blocktyp = 'info'
                 return i
             else:
                 self.blocktyp = "verse*"
@@ -260,13 +260,13 @@ class SongConverter():
         return self.latex_jinja_env.get_template(template_path)
 
     def convert(self, lied:str)->str:
-        """ Diese funktion erledigt die Konvertierungsarbeit für eine einzelne datei. 
-            lied: [str] Inhalt der Datei """
+        ''' Diese funktion erledigt die Konvertierungsarbeit für eine einzelne datei. 
+            lied: [str] Inhalt der Datei '''
         lied = lied.split('\n')  # in zeilen zerlegen
         # Jeder zeile die beiden wahrscheinlichsten typen zuordnen
         typen = Heuristik(lied)
         # Klasse zum einfahcen verwalten der Daten 
-        texttyp = laTexttype(Heuristik(lied))
+        texttyp = laTexttype(typen)
 
         #XXX: Hier kann man auch eine Simple Grammatik implementieren
         # Für jede Zeile den Wahrscheinlichsten typ wählen

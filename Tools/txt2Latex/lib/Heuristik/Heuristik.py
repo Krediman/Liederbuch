@@ -133,10 +133,10 @@ def p_Ueberschrift(line, lineNr, prev):
 
 
 def p_Information(line, lineNr, prev):
-    l = line.lower().strip(' ')
+    l = line.lower().strip()
     if l.startswith('@info') or l.startswith('info ') or l.startswith('info:'): # Markierte Zeile
         return 1
-    if len(prev)>0 and _typen["Info"] in prev[-1][1:]: # Nicht markierte zeile
-        return p_Textzeile(line.lstrip(' ')[5:], lineNr, prev)
+    if len(prev) > 0 and _typen['Info'] in prev[-1][1:]:  # Nicht markierte zeile
+        return 1
     return 0
 
