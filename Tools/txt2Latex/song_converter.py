@@ -5,15 +5,27 @@ import re
 import sys
 from lib.Heuristik.Heuristik import Heuristik
 from lib.texttype.texttype import texttype
-# Erlaubt das einfache Arbeiten mit texen zugeordneten datenassert ('Überschrift' in block.types())
+# Erlaubt das einfache Arbeiten mit texen zugeordneten daten 
+
+## Konfiguration:
+VERSEREGEX    = r'^\s?\d+([).:]|( :))*\s*'
+CHORUSREGEX   = r'^\s?Ref(rain)?([).:]|( :))*\s*'
+INFOREGEX     = r'^\s?@?info((:\s*)|\s+)'
+FSAKKORDREGEX = r'\S+' #muss einfach nur alles fangen, was möglicherweise ein Akkord sein könnte.
+
+Umgebungen = { #Definiert die start- und endkommandos für die verwendeten latex-Umgebungen
+    'failsafe': (r'\beginverse*',      r'\endverse*'), # wird verwendet, falls aus irgendeinem Grund kein anderer passt. Nicht entfernen!
+    'verse*':   (r'\beginverse*',      r'\endverse*'),
+    'verse':    (r'\beginverse',       r'\endverse'),
+    'chorus':   (r'\beginchorus',      r'\endchorus'),
+    'info':     (r'\beginscripture{}', r'\endscripture')            
+            }
+
 # typing: Pfadspezifikation:
 pfad = Union[str, os.DirEntry]
 
 class laTexttype(texttype):
-    verseregex = r"^\s?\d+([).:]|( :))*\s*"
-    refrainregex = r"^\s?[Rr][Ee][Ff]([Rr][Aa][Ii][Nn])?([).:]|( :))*\s*"
-    inforegex = r"^\s?@?info((:\s*)|\s+)"
-    """Subklasse von texttype, die zusätzlich textblöcke erzeugt, die an jinja2 übergeben werden können"""
+    '''Subklasse von texttype, die zusätzlich textblöcke erzeugt, die an jinja2 übergeben werden können'''
     def __init__(self, data:List[List[str]], gew_typ=None):
         texttype.__init__(self, data, gew_typ)
         self.blocktyp = ''
@@ -28,7 +40,7 @@ class laTexttype(texttype):
 
     __doc__ = texttype.__doc__ + """
         Speichert die Daten, die hinterher in latex ausgegeben werden.
-        typ: alle typen, die leadsheets kennt. z.B. verse, verse*, refrain, info
+        typ: alle typen, die leadsheets kennt. z.B. verse, verse*, chorus, info
 
         text: wird 1: 1 in den latex code übernommen. """
 
@@ -60,39 +72,37 @@ class laTexttype(texttype):
                 #kein return, vielleicht findet man das label in der nächsten zeile
         return -1
     
-    def squashChords(self):
-        """setzt akkord- und Textzeilen zusammen, wenn möglich.
+    @staticmethod
+    def squashChords(text: List[str], gew_typ: List[str]):
+        '''setzt akkord- und Textzeilen zusammen, wenn möglich.
         sonst werden zeilen rein aus akkorden generiert
-        Damit das funktioniert, muss der richtige typ gewählt sein."""
-        self._updateWD()
+        Damit das funktioniert, muss der richtige typ gewählt sein.'''
 
-        def ATzeile(akkzeile:Tuple[str], textzeile:Tuple[str])->Tuple[str]:
-            """baut Akkord- und textzeile zu einer latex-
-            kompatiblen Akkordtextzeile zusammen"""
+        def ATzeile(akkzeile:str, textzeile:str)->str:
+            '''baut Akkord- und textzeile zu einer latex-
+            kompatiblen Akkordtextzeile zusammen'''
 
             def atchord(akkord:str)->str:
-                """gibt den latex befehl zurück, der den akkord an die passende stelle in den text setzt"""
-                return r"\[" + akkord + "]"
-            akkorde = akkzeile[0]
+                '''gibt den latex befehl zurück, der den akkord an die passende stelle in den text setzt'''
+                return r'\[' + akkord + ']'
             #Textzeile falls nötig verlängern, bis sie wenigstens so lang ist, wie die Akkordzeile
-            text = textzeile[0].ljust(len(akkorde))
+            textzeile = textzeile.ljust(len(akkzeile))
 
             atz = '' #ergebnis: die akkordtextzeile
             textpos = 0
             # iteriere über alle Akkorde der Zeile:
-            for match in re.finditer(r"\S+", akkorde):
+            for match in re.finditer(FSAKKORDREGEX, akkzeile):
                 beg, end = match.start(), match.end()
-                atz += text[textpos:beg]+atchord(akkorde[beg:end])
+                atz += textzeile[textpos:beg]+atchord(akkzeile[beg:end])
                 textpos = beg
             
             # Den erst des textes nachd em letzten Akkord übernehmen
-            atz += text[textpos:]
-            return (atz, "Akkordtextzeile") #neuer typ ist klar
+            atz += textzeile[textpos:]
+            return atz
 
-        def Azeile(akkzeile:Tuple[str])->Tuple[str]:
-            """setzt die akkordzeile so, dass latex die zeichen als akkorde ohne text setzt"""
-            akkorde = akkzeile[0]
-            #wir wollen die abstände zwischen den Akkorden einigermaßen abbilden:
+        def Azeile(akkzeile:str)->str:
+            '''setzt die akkordzeile so, dass latex die zeichen als akkorde ohne text setzt'''
+            #wir wollen die Abstände zwischen den Akkorden einigermaßen abbilden:
             #' ' -> leerzeichen
             #'  ' -> 1em
             #sonst: 1 em je 2 (3?) leerzeichen
@@ -101,34 +111,33 @@ class laTexttype(texttype):
                 return r"\[" + akkord + "]"
                 
             lastEnd = 0 #position des vorherigen endes
-            azeile = '{\nolyrics ' #Ausgabe
-            for match in re.finditer(r"\S+", akkorde):
+            azeile = r'{\nolyrics ' #Ausgabe
+            for match in re.finditer(FSAKKORDREGEX, akkzeile):
                 beg, end = match.start(), match.end()
                 spaces = beg - lastEnd  #anzahl der leerzeichen zwischen den beiden Akkorden
                 if spaces == 0:
                     #wenn kein leerraum, dass wird auch keiner generiert
                     pass
-                elif spaces <= 1:
+                elif spaces == 1:
                     azeile += ' '
                 else:
-                    azeile += r"\hspace{" + str(int((spaces+1)//3)) +"}" #XXX Hier könnte ein fehler entstehen.
-                azeile += achord(akkorde[beg:end])
-                textpos = beg
-            azeile += "}"
-            return (azeile, "Akkordzeile") # neuer typ ist klar
-            
-
-        newdata = []
+                    azeile += r'\hspace{' + str(int((spaces+1)//3)) +'em}' #XXX Hier könnte ein fehler entstehen.
+                azeile += achord(akkzeile[beg:end])
+                lastEnd = end
+            azeile += '}'
+            return azeile
+        
+        newtext = []
         newtyp = []
         prevline = None #text der vorherigen zeile
         prevtyp = None  #typ der vorherigen zeile
         i = 0 # zu lesende Zeile (es wird jeweils die vorherige zeile verarbeitet)
         #füge data und gew_typ ein None-Element hinzu. Das wird hinterher nicht gelesen, das macht den Code einfacher
-        self.data.append(None)
-        self.gew_typ.append(None)
-        while i<len(self.data):
-            line = self.data[i]
-            gew_typ = self.gew_typ[i]
+        text.append(None)
+        gew_typ.append(None)
+        while i<len(text):
+            line = text[i]
+            line_typ = gew_typ[i]
             #unterscheide 4 Fälle:
             #1) Die vorherige zeile existiert nicht / wird nicht verwendet
             if prevline is None or prevtyp is None:
@@ -138,37 +147,34 @@ class laTexttype(texttype):
             #2) die vorherige zeile ist eine akkordzeile
             elif prevtyp == "Akkordzeile":
                 # ist die aktuelle zeile eine Textzeile?
-                if gew_typ == "Textzeile":
+                if line_typ == 'Textzeile':
                     #die beiden Zeilen werden zu einer Akkordtextzeile zusammengefügt.
-                    newdata.append(ATzeile(prevline, line))
+                    newtext.append(ATzeile(prevline, line))
                     # die neue zeile ist vom typ Akkordtextzeile
                     newtyp.append("AkkordTextZeile")
                     #jetzt sind beide zeilen bentzt worden.
                     #die aktuelle zeile wird im folgenden nicht mehr (als vorherige zeile) verwendet.
                     line = None
-                    gew_typ = None
+                    line_typ = None
 
                 else:
                     #die vorherige Zeile wird als (einzelne) Akkordzeile formatiert
-                    newdata.append(Azeile(prevline))
+                    newtext.append(Azeile(prevline))
                     newtyp.append(prevtyp)
             
             #3) die letzte Zeile ist eine andere Zeile (infozeile, leerzeile, Überschrift) Das sollte nicht vorkommen
             else:
                 #es wird nicht zusammengeführt. die vorherige zeile wird unverändert übernommen.
-                newdata.append(prevline)
+                #XXX Warnung ausgeben ??
+                newtext.append(prevline)
                 newtyp.append(prevtyp)
             
             #gehe eine zeile weiter
             prevline = line
-            prevtyp = gew_typ
+            prevtyp = line_typ
             i += 1
         
-        # Die neuen Daten verwenden
-        # Die anderen arbeitsdaten (z.B. self.text) werden dadurch ungültig.
-        self.invalidateWD() 
-        self.data = newdata
-        self.gew_typ = newtyp
+        return newtext, newtyp
 
     def makelatexdata(self):
         """erstellt den Text, der in das Latex-dokument eingefügt wird.
@@ -177,56 +183,56 @@ class laTexttype(texttype):
         # ohne die realive position der zeichen zur zeile darüber zu ändern.
         def cutlabel(self, linenr, regex):
             if linenr > 0:
-                    # vorherige Zeile muss ebenfalls gekürz werden, sonst passen die beiden nicht mehr aufeiander
-                    #aktuelle zeile
-                    akt = re.sub(regex, '', self.text[linenr])
-                    #Anzahl der leerzeichen, die in der darüberliegenden Zeile zu viel sind.
-                    l = len(self.text[linenr])-len(akt) 
-                    # vorherige Zeile
-                    prev = self.text[linenr - 1]
-                    while l > 0:
-                        l -= 1
-                        if prev.startswith(' '):
-                            #falls möglich, die zeile vorher kürzen
-                            prev = prev[1:]
-                        else:
-                            #sonst die aktuelle zeile einrücken
-                            akt = ' ' + akt
-                    self.text[linenr - 1] = prev
-                    self.text[linenr] = akt
+                # vorherige Zeile muss ebenfalls gekürz werden, sonst passen die beiden nicht mehr aufeiander
+                #aktuelle zeile
+                akt = re.sub(regex, '', self.text[linenr], flags=re.IGNORECASE)
+                #Anzahl der leerzeichen, die in der darüberliegenden Zeile zu viel sind.
+                l = len(self.text[linenr])-len(akt) 
+                # vorherige Zeile
+                prev = self.text[linenr - 1]
+                while l > 0:
+                    l -= 1
+                    if prev.startswith(' '):
+                        #falls möglich, die zeile vorher kürzen
+                        prev = prev[1:]
+                    else:
+                        #sonst die aktuelle zeile einrücken
+                        akt = ' ' + akt
+                self.text[linenr - 1] = prev
+                self.text[linenr] = akt
             else:
                 # Wenn es die erste zeile ist, ist nichts zu tun, da es keine vorherige zeile gibt.
-                self.text[linenr] = re.sub(regex, '', self.text[linenr])
+                self.text[linenr] = re.sub(regex, '', self.text[linenr], flags=re.IGNORECASE)
         
         self._updateWD()
         self.text = self.str + [] # echte kopie, statt referenz
         if self.use_autotyp:
-            lineNr = self.autotyp() #XXX: rückgabewert sollte 0 oder -1 sein, sonst Warnung werfen
-            # Akkorde und text in eine zeile zusammensetzen, wenn möglich
-            if self.blocktyp in {"verse*", "verse", "refrain"}:
-                # updateWD löscht den blocktyp
-                #   blocktyp zwischenspeichern, um ihn hinterher wieder zu setzen
-                blocktyp = self.blocktyp
-                # Akkorde passend shreiben. das ändert normalerweise einige Zeilen.
-                self.squashChords()
-                # durch das zusammensetzten der zeilen in squashchords rutschen die labels ggf in eine andere zeile.
-                # Deshalb die zeilenummer des labels neu berechnen.
-                lineNr = self.autotyp()
-                # Deshalb müssen die Arbeitsdaten neu erstellt werden.
-                self._updateWD()
-                self.text = self.str + []
-                self.blocktyp = blocktyp 
-            
-            # Labels aus dem text entfernen, falls vorhanden.
-            # Labels müssten jetzt in der ersten zeile stehen.
-            if self.blocktyp == "verse*":  # Kein Label -> nichts zu tun
-                pass
-            elif self.blocktyp == "verse":
-                cutlabel(self, lineNr, laTexttype.verseregex)
-            elif self.blocktyp == "chorus":
-                cutlabel(self, lineNr, laTexttype.refrainregex)
-            elif self.blocktyp == "info":
-                cutlabel(self, lineNr, laTexttype.inforegex)
+            lineNr = self.autotyp() #XXX: rückgabewert sollte 0, 1 oder -1 sein, sonst Warnung, 
+            # da das Label nicht an der richtigen stelle steht
+        else:
+            # Im Moment wird die Zeilennummer benötigt. Daher funktioniert das ganze nicht ohne autotyp.
+            raise NotImplementedError('makelatexdata ohne autotyp ist nicht implementiert.')
+
+        # Labels aus dem text entfernen, falls vorhanden.
+        if self.blocktyp == 'verse*' or lineNr == -1:  # Kein Label gefunden -> nichts zu tun
+            pass
+        elif self.blocktyp == 'verse':
+            cutlabel(self, lineNr, VERSEREGEX)
+        elif self.blocktyp == 'chorus':
+            cutlabel(self, lineNr, CHORUSREGEX)
+        elif self.blocktyp == 'info':
+            cutlabel(self, lineNr, INFOREGEX)
+        
+        # Latex Befehle für den Anfang und das Ende der Umgebung, in die der Block geschrieben wird, setzen.
+        self.begEnvCmd, self.endEnvCmd = Umgebungen.get(self.blocktyp, Umgebungen['failsafe'])
+
+        # Akkorde und text in eine Zeile zusammensetzen, wenn möglich und Akkorde zu erwarten sind.
+        if self.blocktyp in {'verse*', 'verse', 'chorus'}:
+            # Akkorde passend shreiben. das ändert normalerweise einige Zeilen.
+            self.text, neu_gew_typ = laTexttype.squashChords(self.text, self.gew_typ)
+            # Jetzt gibt es im allgemeinen weniger zeilen, als Vorher.
+        
+
 
 
 
@@ -399,9 +405,9 @@ class SongConverter():
         das das lied darstellt."""
     
     def fill_template(self, title:str, metadaten: Dict[str, str], inhalt: List[laTexttype]) -> str:
-        """füllt das jinja2-template mit den metadaten uund dem Inhalt
-        erlaubte Schlüssel für metadaten: index, wuw, mel, txt, meljahr, txtjahr, alb, lager, ..."""
-        return self.template.render(title=title, metadata=metadaten, content=inhalt)
+        '''füllt das jinja2-template mit den metadaten uund dem Inhalt
+        erlaubte Schlüssel für metadaten: index, wuw, mel, txt, meljahr, txtjahr, alb, lager, ...'''
+        return self.template.render(title=title, metadata=metadaten, inhalt=inhalt)
 
     __doc__ = "Erlaubt das konvertieren von Liedern in textform in Latex_dokumente"
 

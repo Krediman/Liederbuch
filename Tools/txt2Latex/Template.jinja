@@ -4,14 +4,13 @@
 \BLOCK{endfor}
 ]
 
-\BLOCK{for block in content}
+\BLOCK{for block in inhalt}
 
-\begin\VAR{block.blocktyp}
+\VAR{block.begEnvCmd}
 \BLOCK{for zeile in block.text}
 \VAR{zeile}
 \BLOCK{endfor}
-\end\VAR{block.blocktyp}
-
+\VAR{block.endEnvCmd}
 \BLOCK{endfor}
 
 \endsong
