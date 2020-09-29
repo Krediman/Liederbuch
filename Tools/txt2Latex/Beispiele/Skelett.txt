@@ -1,11 +1,11 @@
-Titel des Liedes [<erste zeile>]
-wuw: Worte und Weise falls es die gleiche Person ist
-jahr: jahr für worte und weise, alternativ j:
-mel: Autor der Melodie. ALternativ melodie, weise
-meljahr: jahr der Melodie. Alternativ meljahr, weisej, weisejahr
-txt: Autor des Textes. Alternativ text, worte
-txtj: Jahr des Textes. Alternativ txtjahr, textjahr, wortej, wortejahr
-alb: Album: alternativ album
+Titel des Liedes [Das hier ist]
+wuw: Worte und Weise
+jahr: jahr(j, jahr)
+mel: Autor der Melodie(mel, melodie, weise)
+meljahr: jahr(meljahr, melj, weisej, weisejahr)
+txt: Autor des Textes(txt, text, worte)
+txtj: Jahr(txtjahr, textjahr, wortej, wortejahr)
+alb: Das Album (alb, album)
 lager: Lager auf dem Das Lied geschrieben wurde
 bo: Seite im Bock
 
@@ -44,4 +44,12 @@ dieser Vers hat keine Akkorde. Beachte, dass durch den leerraum eine
 neue Strophe entsteht. Hier gibt es akkorde.
 so schreibt man einen vers ohne Akkorde. 
 
+
+Info: Im Prinzip kann man den Infoblock überall hinsetzen. 
+Am sinnvollsten ist er aber unter dem Lied.
+Auch mehrere Zeilen sind drin.
+Leerzeilen sind aber nicht drin (sonst gibt es eine neue strophe)
+Das heißt aber noch lange nicht, dass sich Latex auch daran hält.
+Neuzeilen gehen aber mit \\
+Die sind dann auch zu sehen :)
 
