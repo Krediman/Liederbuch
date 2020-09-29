@@ -24,7 +24,7 @@ cat <<EOF
 EOF
 
 for file in Lieder/*.tex; 
-    do echo "\\input{$file}"
+    do echo "\\input{"${file%.*}"}"
 done
 
 cat <<EOF
