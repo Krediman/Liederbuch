@@ -3,10 +3,10 @@
 """
 Created on Mon Mar  9 22:27:10 2020
 
-@author: paul
+@author: Paul Steuernagel
 """
 
-from typing import Collection, Set
+from typing import Collection, Set, Union
 from song_converter import SongConverter
 import sys
 import os
@@ -15,7 +15,7 @@ import typing
 # typing: Pfadspezifikation:
 pfad = typing.Union[str, os.DirEntry]
 
-insuffixes = ['.txt',]
+insuffixes = {'.txt', '.lied'}
 outsuffix = '.tex'
 template_file = "Template.jinja"
 
@@ -31,6 +31,19 @@ def get_files(dir_content:Set[pfad])-> Set[pfad]:
 
 def get_accessable(dir_content:Set[pfad], access=os.R_OK) -> Set[pfad]:
     return set(elem for elem in dir_content if os.access(elem, access))
+
+
+def filter_suffix(dir_content:Set[pfad], suffix:Union[str, Collection[str]]):
+    # Gibt alle Dateien in dir_content zurück, die auf das bzw. eines der Suffix/e endet.
+    erg = set()
+    if type(suffix) == str:
+        suffix = set((suffix, ))
+    for file in dir_content:
+        for suf in suffix:
+            if file.name.endswith(suf):
+                erg.add(file)
+                break
+    return erg
 
 
 def get_inaccessable(dir_content:Set[pfad], access=os.R_OK) -> Set[pfad]:
@@ -86,7 +99,7 @@ def convertFile(infile:pfad, outfile: pfad)-> None:
 
 
 def getInfiles(directory:pfad) -> Set[pfad]:
-    return get_accessable(get_files(get_dir_content(directory)), os.R_OK)
+    return get_accessable(filter_suffix(get_files(get_dir_content(directory)), insuffixes), os.R_OK)
 
 
 def fileIsWriteable(datei:pfad, allow_overwrite=False)->bool:
@@ -110,12 +123,17 @@ if __name__== "__main__":
     # Aufrufparameter lesen
     if len(sys.argv) >= 3:
         indir, outdir = sys.argv[-2:]
+        # TODO: Wie liest man am einfachsten mehrere Argumente in der form -oa statt -o -a
         if len(sys.argv) > 3 and '-o' in sys.argv[1:-2]:
+            # Überschreiben ist erlaubt
             overwrite = True
         else:
             overwrite = False
+        if len(sys.argv) > 3 and '-a' in sys.argv[1:-2]:
+            # jede Datei soll konvertiert werden
+            insuffixes.add('')
     else:
-        print("Benutzung: converter.py [-o] Eingabeverzeichnis Ausgabeverzeichnis", file=sys.stderr)
+        print("Benutzung: converter.py [-o] [-a] Eingabeverzeichnis Ausgabeverzeichnis", file=sys.stderr)
         sys.exit(1)
     if not (os.path.isdir(indir) and os.path.isdir(outdir)):
         raise Exception("dirctory not found")

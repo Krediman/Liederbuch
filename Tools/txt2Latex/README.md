@@ -11,8 +11,10 @@ Außerdem wird die Bibliothek jinja2 benötigt.
 
 ## Verwendung:
 Der Konveriterung wird gestartet mit
-```$ python3 converter.py [-o] <Eingabeverzeichnis> <Ausgabeverzeichnis>```
+```$ python3 converter.py [-o] [-a] <Eingabeverzeichnis> <Ausgabeverzeichnis>```
 
-Das Programm liest alle Dateien im Eingabeverzeichnis und erstellt für jede Datei `Name.txt` eine Datei `Name.tex` im Ausgabeverzeichnis, die den dazugehörenden Latex code enthält.
-Die Option `-o` erlaubt das Überschreiben von Dateien im Ausgabeverzeichnis, falls nötig.
+Das Programm liest alle Dateien im Eingabeverzeichnis und erstellt für jede Datei `Name.txt` eine Datei `Name.tex` im Ausgabeverzeichnis, die den dazugehörenden Latex code enthält. Standartmäßig werden nur Dateien verarbeitet, die auf `.txt` oder `.lied` enden.
+
+Die Option `-o` erlaubt das Überschreiben von Dateien im Ausgabeverzeichnis, falls nötig. 
+Die Option `-a` deaktiviert den Dateinamenfilter. Es werden alle Dateien unabhängig vom Suffix verarbeitet
 
