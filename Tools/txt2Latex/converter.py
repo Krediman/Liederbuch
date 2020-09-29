@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
+'''
 Created on Mon Mar  9 22:27:10 2020
 
 @author: Paul Steuernagel
-"""
+'''
 
 from typing import Collection, Set, Union
 from song_converter import SongConverter
@@ -17,7 +17,7 @@ pfad = typing.Union[str, os.DirEntry]
 
 insuffixes = {'.txt', '.lied'}
 outsuffix = '.tex'
-template_file = "Template.jinja"
+template_file = 'Template.jinja'
 
 
 def get_dir_content(directory:pfad) -> Set[os.DirEntry]:
@@ -51,8 +51,8 @@ def get_inaccessable(dir_content:Set[pfad], access=os.R_OK) -> Set[pfad]:
 
 
 def get_outfilename(infilename:str, outending:str, inendings:Collection[str]) -> str:
-    """bestimmt einen Dateinamen für die Ausgabe
-    outending ist die gewünschte endung der ausgabe, Endungen in inending werden entfernt"""
+    '''bestimmt einen Dateinamen für die Ausgabe
+    outending ist die gewünschte endung der ausgabe, Endungen in inending werden entfernt'''
     for end in inendings: # Dateiendung kürzen
         if infilename.endswith(end):
             infilename = infilename[:len(infilename)-len(end)]
@@ -95,7 +95,7 @@ def convertFile(infile:pfad, outfile: pfad)-> None:
         # Datei speichern
         print(' speichern… ', end='')
         writefile(outfile, outdata)
-        print("fertig")
+        print('fertig')
 
 
 def getInfiles(directory:pfad) -> Set[pfad]:
@@ -119,7 +119,7 @@ def fileIsWriteable(datei:pfad, allow_overwrite=False)->bool:
     return os.access(pdir, os.W_OK)
 
 
-if __name__== "__main__":
+if __name__== '__main__':
     # Aufrufparameter lesen
     if len(sys.argv) >= 3:
         indir, outdir = sys.argv[-2:]
@@ -133,10 +133,10 @@ if __name__== "__main__":
             # jede Datei soll konvertiert werden
             insuffixes.add('')
     else:
-        print("Benutzung: converter.py [-o] [-a] Eingabeverzeichnis Ausgabeverzeichnis", file=sys.stderr)
+        print('Benutzung: converter.py [-o] [-a] Eingabeverzeichnis Ausgabeverzeichnis', file=sys.stderr)
         sys.exit(1)
     if not (os.path.isdir(indir) and os.path.isdir(outdir)):
-        raise Exception("dirctory not found")
+        raise Exception('dirctory not found')
 
     # Dateien, die gelesen werden können
     infiles = getInfiles(indir)
@@ -150,7 +150,7 @@ if __name__== "__main__":
 
         # Prüfen, ob ausgabedatei geschrieben werden kann / darf.
         if not fileIsWriteable(outpath, overwrite):
-            print(outfilename, ' darf nicht überschrieben werden. ', infile.name, " wird übersprungen.", file=sys.stderr)
+            print(outfilename, ' darf nicht überschrieben werden. ', infile.name, ' wird übersprungen.', file=sys.stderr)
             continue # Datei überspringen
         
         try:

@@ -38,23 +38,23 @@ class laTexttype(texttype):
         self.text = []
         return super()._generateWorkingData()
 
-    __doc__ = texttype.__doc__ + """
+    __doc__ = texttype.__doc__ + '''
         Speichert die Daten, die hinterher in latex ausgegeben werden.
         typ: alle typen, die leadsheets kennt. z.B. verse, verse*, chorus, info
 
-        text: wird 1: 1 in den latex code übernommen. """
+        text: wird 1: 1 in den latex code übernommen. '''
 
     def set_blocktyp(self, typ):
-        """typ des texttype objektes setzen"""
+        '''typ des texttype objektes setzen'''
         self.blocktyp = typ
         self.use_autotyp = False
     
     def autotyp(self)->int:
-        """findet automatisch den typ des texttype-objektes
+        '''findet automatisch den typ des texttype-objektes
         gibt die nummer der Zeile zurück, in der der hinweis gefunden wurde
         Es wird angenommen, dass das ganze objekt nur einen einzelnen Block enthält.
         gibt die zeilennummer zurück, in der das label, falls vorhanden, steht,
-        sonst -1"""
+        sonst -1'''
         self._updateWD()
         for i in range(len(self.str)):
             line = self.str[i]
@@ -68,7 +68,7 @@ class laTexttype(texttype):
                 self.blocktyp = 'info'
                 return i
             else:
-                self.blocktyp = "verse*"
+                self.blocktyp = 'verse*'
                 #kein return, vielleicht findet man das label in der nächsten zeile
         return -1
     
@@ -105,18 +105,19 @@ class laTexttype(texttype):
             #wir wollen die Abstände zwischen den Akkorden einigermaßen abbilden:
             #' ' -> leerzeichen
             #'  ' -> 1em
-            #sonst: 1 em je 2 (3?) leerzeichen
+            # sonst: 1 em je 3 leerzeichen
+            # TODO: auch für die akkordtextzeilen implementieren
             def achord(akkord: str) -> str:
-                """latex-befehl zum setzen eines Akkordes ohne text darunter"""
-                return r"\[" + akkord + "]"
+                '''latex-befehl zum setzen eines Akkordes ohne text darunter'''
+                return r'\[' + akkord + ']'
                 
             lastEnd = 0 #position des vorherigen endes
             azeile = r'{\nolyrics ' #Ausgabe
             for match in re.finditer(FSAKKORDREGEX, akkzeile):
                 beg, end = match.start(), match.end()
-                spaces = beg - lastEnd  #anzahl der leerzeichen zwischen den beiden Akkorden
+                spaces = beg - lastEnd  #Anzahl der Leerzeichen zwischen den beiden Akkorden
                 if spaces == 0:
-                    #wenn kein leerraum, dass wird auch keiner generiert
+                    #wenn kein Leerraum, dann wird auch keiner generiert
                     pass
                 elif spaces == 1:
                     azeile += ' '
@@ -145,13 +146,13 @@ class laTexttype(texttype):
                 pass
 
             #2) die vorherige zeile ist eine akkordzeile
-            elif prevtyp == "Akkordzeile":
+            elif prevtyp == 'Akkordzeile':
                 # ist die aktuelle zeile eine Textzeile?
                 if line_typ == 'Textzeile':
                     #die beiden Zeilen werden zu einer Akkordtextzeile zusammengefügt.
                     newtext.append(ATzeile(prevline, line))
                     # die neue zeile ist vom typ Akkordtextzeile
-                    newtyp.append("AkkordTextZeile")
+                    newtyp.append('AkkordTextZeile')
                     #jetzt sind beide zeilen bentzt worden.
                     #die aktuelle zeile wird im folgenden nicht mehr (als vorherige zeile) verwendet.
                     line = None
@@ -177,9 +178,9 @@ class laTexttype(texttype):
         return newtext, newtyp
 
     def makelatexdata(self):
-        """erstellt den Text, der in das Latex-dokument eingefügt wird.
-        es wird angenommen, dass das ganze objekt nur einen einzelenn block enthält"""
-        # Zeilen automatich einrücken; regex vom anfang der zeile mit nummer linenr entfernen, 
+        '''erstellt den Text, der in das Latex-dokument eingefügt wird.
+        es wird angenommen, dass das ganze objekt nur einen einzelenn block enthält'''
+        # Zeilen automatich einrücken: regex vom anfang der zeile mit nummer linenr entfernen, 
         # ohne die realive position der zeichen zur zeile darüber zu ändern.
         def cutlabel(self, linenr, regex):
             if linenr > 0:
@@ -274,11 +275,11 @@ class SongConverter():
             zeilentypen = texttyp.choices(linenr)
             if zeilentypen[0] is None:
                 if len(zeilentypen)>1:
-                    print("typ von zeile", linenr, "konnte nicht ermittelt werden. es wird \""+zeilentypen[1]+"\" angenommen")
+                    print('typ von zeile', linenr, 'konnte nicht ermittelt werden. es wird \''+zeilentypen[1]+'\' angenommen')
                     texttyp.choose(linenr, zeilentypen[1])
                 else:
-                    print("typ von zeile", linenr, "konnte nicht ermittelt werden. es wird \"Leer\" angenommen")
-                    texttyp.choose(linenr, "Leer")
+                    print('typ von zeile', linenr, 'konnte nicht ermittelt werden. es wird \'Leer\' angenommen')
+                    texttyp.choose(linenr, 'Leer')
                 continue
             texttyp.choose(linenr, zeilentypen[0])
         bloecke = texttyp.split('Leer')
@@ -287,7 +288,7 @@ class SongConverter():
 
         metadaten = dict()  # titel, Worte, Weise, alternativtitel, genre, tags, etc.
         inhalt = list()  # alle Blöcke, die in den latex Code übertragen werden.
-        titel = "HIER ist was schief gelaufen" #wenn dieser titel nicht ersetzt wird, ist etwas falsch...
+        titel = 'HIER ist was schief gelaufen' #wenn dieser titel nicht ersetzt wird, ist etwas falsch...
         
         for i in range(len(bloecke)):
             block = bloecke[i]
@@ -296,10 +297,10 @@ class SongConverter():
                 #Erster Block: Hier sollte die Überschrift und die metadaten stehen.
                 if ('Überschrift' not in block.types()): # Wenn der erste block keine Überschrift ist, 
                     # gibt das kein sinnvolles ergebnis. dann kann man auch gleich abbrechen
-                    print("Keine Überschrift gefunden", block, file=sys.stderr)
+                    print('Keine Überschrift gefunden', block, file=sys.stderr)
                     raise Exception()
                 metadaten = SongConverter.meta_aus_titel(block)
-                titel = metadaten.pop("title")
+                titel = metadaten.pop('title')
                 continue
             
             # für latex konvertieren
@@ -314,75 +315,77 @@ class SongConverter():
         # key: value
         # …
         # Text, wie in der Eingabedatei, zeiilenweise als liste, nur dieser Block
-        text = str(block).split("\n")
+        text = str(block).split('\n')
         #Marker:
         titelz = text[0]
         metatext = text[1:]
         lk = titelz.find('[')
         rk = titelz.find(']', lk)
-        # HACK: nicht gefunden position:
-        # Wenn das zeihen nicht gefunden wird, ist sein index -1. 
-        # Das führt zu dem problem, dass das Minimum dieser werte einen offset vom hinteren ende hat.
+        # HACK: zeichen nicht gefunden:
+        # Wenn das zeichen nicht gefunden wird, gibt find -1 zurück. 
+        # Das führt zu dem Problem, dass das Minimum (siehe unten) 
+        # den wert -1 hat (offset von 1 vom hinteren ende des Strings).
         # Dadurch fehlt das letzte zeichen des Titels, wenn nichts dahinter kommt.
-        # Setze die Zeichenposition auf das len(text)-te Zeichen des Textes. Diese Position kann nicht 
-        # gelesen werden, das passiert aber auc nicht. es löst das Problem
+        # Setze die Zeichenposition in diesem Fall auf das len(text)-te Zeichen 
+        # des Textes. Diese Position kann nicht gelesen werden, das passiert 
+        # aber auc nicht. Es löst das Problem
         if lk <= 0:
             lk = len(titelz)
         
         #metadaten dictionary
         meta = dict()
         # Titel finden:
-        meta["title"] = titelz[:min((lk, len(titelz)))].strip()
+        meta['title'] = titelz[:min((lk, len(titelz)))].strip()
         # alternativtitel finden
         if rk > lk:
-            meta["index"] = titelz[lk + 1:rk].strip()
+            meta['index'] = titelz[lk + 1:rk].strip()
         
         # restliche metadaten:
         metakeys = dict( # Siehe auch liste in Heuristik.py
-            wuw="wuw",
-            jahr="jahr",
-            j="jahr", 
-            mel="mel",
-            melodie="mel",
-            weise="mel",
-            melj="meljahr",
-            meljahr="meljahr",
-            weisej="meljahr",
-            weisejahr="meljahr",
-            txt="txt", 
-            text="txt", 
-            worte="txt",
-            txtj="txtjahr",
-            textj="txtjahr",
-            txtjahr="txtjahr",
-            textjahr="txtjahr", 
-            wortejahr="txtjahr", 
-            wortej="txtjahr", 
-            alb = "alb",
-            album ="alb",
-            lager = "lager",
-            bo="bo",
-            bock="bo",
-            vq = "vq",
-            vasquaner="vq",
-            biest="biest",
-            tf = "tf", 
-            turmfalke = "tf",
-            gb = "gb",
-            gnorkenbüdel = "gb",
-            gnorken = "gb",
-            hvp = "hvp",
-            tb ="tb",
-            burgundi ="tb",
-            tarmina ="tb",
-            hk = "hk",
-            holz = "hk",
-            holzknopp = "hk"
+            wuw='wuw',
+            jahr='jahr',
+            j='jahr', 
+            mel='mel',
+            melodie='mel',
+            weise='mel',
+            melj='meljahr',
+            meljahr='meljahr',
+            weisej='meljahr',
+            weisejahr='meljahr',
+            txt='txt', 
+            text='txt', 
+            worte='txt',
+            txtj='txtjahr',
+            textj='txtjahr',
+            txtjahr='txtjahr',
+            textjahr='txtjahr', 
+            wortejahr='txtjahr', 
+            wortej='txtjahr', 
+            alb = 'alb',
+            album ='alb',
+            lager = 'lager',
+            bo='bo',
+            bock='bo',
+            vq = 'vq',
+            vasquaner='vq',
+            biest='biest',
+            tf = 'tf', 
+            turmfalke = 'tf',
+            gb = 'gb',
+            gnorkenbüdel = 'gb',
+            gnorken = 'gb',
+            hvp = 'hvp',
+            tb ='tb',
+            burgundi ='tb',
+            tarmina ='tb',
+            hk = 'hk',
+            holz = 'hk',
+            holzknopp = 'hk'
         )
         for line in metatext:
-            if ":" in line:
+            if ':' in line:
                 #davor ist der schlüssel, danach der wert
-                i = line.index(":") # in [0, len(ll)-1]
+                i = line.index(':') # in [0, len(ll)-1]
                 keystr = line[:i].lower().replace(' ', '')
                 valstr = line[i+1:].strip() #schlägt fehl wernn der wert nicht angegeben wird.
                 if keystr in metakeys.keys():
@@ -390,26 +393,26 @@ class SongConverter():
                     meta[key] = valstr
                 else:
                     #das sollte nicht passieren
-                    print('"ungültiger schlüssel', keystr)
+                    print('ungültiger schlüssel', keystr)
             else:
-                if line == "":
+                if line == '':
                     # die Zeile ist leer. Kein Problem, wird nicht verarbeitet
                     pass
                 else:
-                    print("Falsch Formatierte metazeile:", line)
+                    print('Falsch Formatierte metazeile:', line)
         return meta
 
-    convert.__doc__ = """file_content: Ein string, der ein ganzes lied enthält. 
+    convert.__doc__ = '''file_content: Ein string, der ein ganzes lied enthält. 
         Siehe hiezu die Dokumentation für Lieder im Eingabeverzeichnis. 
         Die funktion convertiert das lied in latex. die ausgabe ist ein latex-dokument 
-        das das lied darstellt."""
+        das das lied darstellt.'''
     
     def fill_template(self, title:str, metadaten: Dict[str, str], inhalt: List[laTexttype]) -> str:
         '''füllt das jinja2-template mit den metadaten uund dem Inhalt
         erlaubte Schlüssel für metadaten: index, wuw, mel, txt, meljahr, txtjahr, alb, lager, ...'''
         return self.template.render(title=title, metadata=metadaten, inhalt=inhalt)
 
-    __doc__ = "Erlaubt das konvertieren von Liedern in textform in Latex_dokumente"
+    __doc__ = 'Erlaubt das konvertieren von Liedern in textform in Latex_dokumente'
 
 
 
