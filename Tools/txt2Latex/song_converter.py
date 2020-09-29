@@ -223,7 +223,7 @@ class laTexttype(texttype):
                 pass
             elif self.blocktyp == "verse":
                 cutlabel(self, lineNr, laTexttype.verseregex)
-            elif self.blocktyp == "refrain":
+            elif self.blocktyp == "chorus":
                 cutlabel(self, lineNr, laTexttype.refrainregex)
             elif self.blocktyp == "info":
                 cutlabel(self, lineNr, laTexttype.inforegex)
@@ -248,7 +248,7 @@ class SongConverter():
             trim_blocks=True,
             lstrip_blocks=True,
             autoescape=False,
-            loader=j2.FileSystemLoader(os.path.abspath('.'))
+            loader=j2.FileSystemLoader(os.path.dirname(os.path.abspath(__file__))) # Pfad des Ordners, in dem diese Datei (converter.py) liegt.
         )
         #  Template laden
         return self.latex_jinja_env.get_template(template_path)
@@ -340,6 +340,7 @@ class SongConverter():
             melodie="mel",
             weise="mel",
             melj="meljahr",
+            meljahr="meljahr",
             weisej="meljahr",
             weisejahr="meljahr",
             txt="txt", 
