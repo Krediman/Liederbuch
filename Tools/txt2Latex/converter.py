@@ -7,7 +7,7 @@ Created on Mon Mar  9 22:27:10 2020
 '''
 
 from typing import Collection, Set, Union
-from song_converter import SongConverter
+from song_converter import SongKonverter
 import sys
 import os
 import typing
@@ -17,7 +17,7 @@ pfad = typing.Union[str, os.DirEntry]
 
 insuffixes = {'.txt', '.lied'}
 outsuffix = '.tex'
-template_file = 'Template.jinja'
+templatePfad = 'Template.jinja'
 
 
 def get_dir_content(directory:pfad) -> Set[os.DirEntry]:
@@ -91,7 +91,7 @@ def convertFile(infile:pfad, outfile: pfad)-> None:
         indata = readfile(infile)
         # Datei Konvertieren
         print(' umwandeln… ', end='')
-        outdata = converter.convert(indata)  # multithreading nötig?
+        outdata = konverter.konvertiere(indata)  # multithreading nötig?
         # Datei speichern
         print(' speichern… ', end='')
         writefile(outfile, outdata)
@@ -141,8 +141,8 @@ if __name__== '__main__':
     # Dateien, die gelesen werden können
     infiles = getInfiles(indir)
 
-    # Converter laden:
-    converter = SongConverter(template_path=template_file)
+    # Konverter laden:
+    konverter = SongKonverter(templatePfad=templatePfad)
     
     for infile in infiles:
         outfilename = get_outfilename(infile.name, outsuffix, insuffixes) # Dateiname für die Ausgabe

@@ -1,8 +1,5 @@
 ##Unbedingt:
 
-Moll akkorde in kleinbuchstaben und mit m akzeptieren.
-Akkorde entsprechend konvertieren, sodass die Ausgabe ein konfigurierbares durchgehendes Schema hat.
-
 ## Wichtig:
 
 Akkorde nach ende des Textes mit \hspace auseinandersetzen
@@ -14,6 +11,8 @@ Fließkommazahlen mit \hspace verwenden, um Leerzeichen möglichst gut abzubilde
 Daten aus der Konkordanz von "Zeitreisender" verwenden, fehlende Information damit auffüllen.
 
 Eingabe in <spitzen Klammern> (also Hinweise, die nicht gesungen werden) kursiv, etc setzen
+
+Moll-Schreibweisenkonvertierung als kommandozeilenoption.
 
 Intro, Outro, erkennen und setzen
 
