@@ -3,17 +3,26 @@
 Moll akkorde in kleinbuchstaben und mit m akzeptieren.
 Akkorde entsprechend konvertieren, sodass die Ausgabe ein konfigurierbares durchgehendes Schema hat.
 
-@info: -Blocke implementieren
+Woher Kommen die Sterne?
 
-BUG: Mehrere Akkorde über einem Wort -> Leadsheets issues
-## Wichtig
+## Wichtig:
+
+Weitere Refrainmarkierungen in der ein- und ausgabe
+
+Akkorde nach ende des Textes mit \hspace auseinandersetzen
+
+Fließkommazahlen mit \hspace verwenden, um Leerzeichen möglichst gut abzubilden
 
 ## Wäre schön
 
 Daten aus der Konkordanz von "Zeitreisender" verwenden, fehlende Information damit auffüllen.
 
+Eingabe in <spitzen Klammern> (also Hinweise, die nicht gesungen werden) kursiv, etc setzen
+
+Intro, Outro, erkennen und setzen
+
 ## Verrückte Idee
 
-Bilder mit angeben und unter das lied setzen, wenn genug Platz ist
+Bilder mit Angeben und unter das lied setzen, wenn genug Platz ist
 
 
