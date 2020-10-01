@@ -14,8 +14,8 @@ INFOREGEX     = r'^\s?@?info((:\s*)|\s+)'
 FSAKKORDREGEX = r'\S+' #muss einfach nur alles fangen, was möglicherweise ein Akkord sein könnte.
 
 Umgebungen = { #Definiert die start- und endkommandos für die verwendeten latex-Umgebungen
-    'failsafe': (r'\beginverse*',      r'\endverse*'), # wird verwendet, falls aus irgendeinem Grund kein anderer passt. Nicht entfernen!
-    'verse*':   (r'\beginverse*',      r'\endverse*'),
+    'failsafe': (r'\beginverse*',      r'\endverse'), # wird verwendet, falls aus irgendeinem Grund kein anderer passt. Nicht entfernen!
+    'verse*':   (r'\beginverse*',      r'\endverse'),
     'verse':    (r'\beginverse',       r'\endverse'),
     'chorus':   (r'\beginchorus',      r'\endchorus'),
     'info':     (r'\beginscripture{}', r'\endscripture')            

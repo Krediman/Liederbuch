@@ -3,8 +3,6 @@
 Moll akkorde in kleinbuchstaben und mit m akzeptieren.
 Akkorde entsprechend konvertieren, sodass die Ausgabe ein konfigurierbares durchgehendes Schema hat.
 
-Woher Kommen die Sterne?
-
 ## Wichtig:
 
 Weitere Refrainmarkierungen in der ein- und ausgabe
