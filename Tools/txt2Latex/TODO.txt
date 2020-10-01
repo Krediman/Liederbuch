@@ -2,15 +2,13 @@
 
 ## Wichtig:
 
-Akkorde nach ende des Textes mit \hspace auseinandersetzen
-
-Fließkommazahlen mit \hspace verwenden, um Leerzeichen möglichst gut abzubilden
+Seitenzahlen in allen Büchern, die das Pfadiralala listet.
 
 ## Wäre schön
 
 Daten aus der Konkordanz von "Zeitreisender" verwenden, fehlende Information damit auffüllen.
 
-Eingabe in <spitzen Klammern> (also Hinweise, die nicht gesungen werden) kursiv, etc setzen
+Eingabe in (runden Klammern) (echo / Hinweise, die nicht gesungen werden) kursiv, o.Ä. setzen
 
 Moll-Schreibweisenkonvertierung als kommandozeilenoption.
 
