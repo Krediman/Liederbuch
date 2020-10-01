@@ -1,0 +1,50 @@
+Titel des Liedes [<erste zeile>]
+wuw: Worte und Weise falls es die gleiche Person ist
+jahr: jahr für worte und weise, alternativ j:
+mel: Autor der Melodie. ALternativ melodie, weise
+meljahr: jahr der Melodie. Alternativ meljahr, weisej, weisejahr
+txt: Autor des Textes. Alternativ text, worte
+txtj: Jahr des Textes. Alternativ txtjahr, textjahr, wortej, wortejahr
+alb: Album: alternativ album
+lager: Lager auf dem Das Lied geschrieben wurde
+bo: Seite im Bock
+
+a       G    F  E D
+
+    a      e     F           C
+1) Das hier ist die erste Strophe,
+   Esus4     H       G7
+Man schreibt die Akkorde einfach
+ E     d      H
+über den Text.
+
+G    F     E    D    C
+Das hier ist auch eine Strophe,
+ G         H    c   
+alerdings ohne Nummer
+
+       Esus2
+Ref. Das ist der Refrain. Der funktioniert wie alle Strophen auch.
+         A               B
+beachte: Akkorde werden linksbündig eingefügt.
+
+
+5) Die Nummerierten strophen werden weitergezählt.
+Das hier ist also die zweite Strophe. Hier stehen
+keine Akkorde.
+ C      D    E
+Nur in der letzten zeile stehen Akkorde
+
+Ref.
+
+    C#         E5                   C    D Dsus2 D e 
+3) Die Dritte Strophe hat wieder Akkorde
+   C                                         a
+warum auch immer. vielleicht ist die Melodie anders :)
+
+dieser Vers hat keine Akkorde. Beachte, dass durch den leerraum eine 
+  D          E                      f#   
+neue Strophe entsteht. Hier gibt es akkorde.
+so schreibt man einen vers ohne Akkorde. 
+
+

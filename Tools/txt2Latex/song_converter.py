@@ -9,7 +9,7 @@ from lib.texttype.texttype import texttype
 
 ## Konfiguration:
 VERSEREGEX    = r'^\s?\d+([).:]|( :))*\s*'
-CHORUSREGEX   = r'^\s?Ref(rain)?([).:]|( :))*\s*'
+CHORUSREGEX   = r'^\s?Ref(rain)?[).: ]+\s*'
 INFOREGEX     = r'^\s?@?info((:\s*)|\s+)'
 FSAKKORDREGEX = r'\S+' #muss einfach nur alles fangen, was möglicherweise ein Akkord sein könnte.
 
@@ -18,6 +18,7 @@ Umgebungen = { #Definiert die start- und endkommandos für die verwendeten latex
     'verse*':   (r'\beginverse*',      r'\endverse'),
     'verse':    (r'\beginverse',       r'\endverse'),
     'chorus':   (r'\beginchorus',      r'\endchorus'),
+    'repchorus':(r'\printchorus',      r''), #HACK: Die Wiederholung des Refrain nutzt keine Umgebung. Erzeugt wird eine Umgebung ohne Inhalt und endstring. Das ist ein einzelnes Kommando.
     'info':     (r'\beginscripture{}', r'\endscripture')            
             }
 
@@ -59,14 +60,21 @@ class laTexttype(texttype):
         for i in range(len(self.str)):
             line = self.str[i]
             if re.match(CHORUSREGEX, line, re.IGNORECASE) is not None:
-                self.blocktyp = 'chorus'
+                # Auf Chorus-Wiederholungs-hinweis (Ref. ohne weiteren Text) prüfen
+                if (re.sub(CHORUSREGEX, line, '', flags= re.IGNORECASE).replace(' ', '') == '' and len(self.str) == 1):
+                    self.blocktyp = 'repchorus'
+                else:
+                    self.blocktyp = 'chorus'
                 return i
+
             elif re.match(VERSEREGEX, line, re.IGNORECASE) is not None:
                 self.blocktyp = 'verse'
                 return i
+
             elif re.match(INFOREGEX, line, re.IGNORECASE) is not None:
                 self.blocktyp = 'info'
                 return i
+
             else:
                 self.blocktyp = 'verse*'
                 #kein return, vielleicht findet man das label in der nächsten zeile
@@ -202,7 +210,7 @@ class laTexttype(texttype):
                 self.text[linenr - 1] = prev
                 self.text[linenr] = akt
             else:
-                # Wenn es die erste zeile ist, ist nichts zu tun, da es keine vorherige zeile gibt.
+                # Wenn es die erste zeile ist, muss nur das Label abgeschnitten werden, da es keine vorherige zeile gibt.
                 self.text[linenr] = re.sub(regex, '', self.text[linenr], flags=re.IGNORECASE)
         
         self._updateWD()
@@ -219,7 +227,7 @@ class laTexttype(texttype):
             pass
         elif self.blocktyp == 'verse':
             cutlabel(self, lineNr, VERSEREGEX)
-        elif self.blocktyp == 'chorus':
+        elif self.blocktyp in {'chorus', 'repchorus'}:
             cutlabel(self, lineNr, CHORUSREGEX)
         elif self.blocktyp == 'info':
             cutlabel(self, lineNr, INFOREGEX)
@@ -232,6 +240,12 @@ class laTexttype(texttype):
             # Akkorde passend shreiben. das ändert normalerweise einige Zeilen.
             self.text, neu_gew_typ = laTexttype.squashChords(self.text, self.gew_typ)
             # Jetzt gibt es im allgemeinen weniger zeilen, als Vorher.
+        
+        # HACK: Der Inhalt für repchorus (der nicht existiert) soll keine zusätzliche leerzeile verursachen
+        elif self.blocktyp == "repchorus":
+            self.text = []
+        
+        return
         
 
 

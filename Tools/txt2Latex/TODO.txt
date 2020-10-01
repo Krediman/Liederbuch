@@ -5,8 +5,6 @@ Akkorde entsprechend konvertieren, sodass die Ausgabe ein konfigurierbares durch
 
 ## Wichtig:
 
-Weitere Refrainmarkierungen in der ein- und ausgabe
-
 Akkorde nach ende des Textes mit \hspace auseinandersetzen
 
 Fließkommazahlen mit \hspace verwenden, um Leerzeichen möglichst gut abzubilden
