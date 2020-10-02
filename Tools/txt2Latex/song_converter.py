@@ -409,47 +409,62 @@ class SongKonverter():
             meta['index'] = titelz[lk + 1:rk].strip()
         
         # restliche metadaten:
+        # Hier weden alle metadaten gelistet, die in der überschrift enthalten sein können
         metakeys = dict( # Siehe auch liste in Heuristik.py
+            ww='wuw',#Worte und weise
             wuw='wuw',
-            jahr='jahr',
+            jahr='jahr',#jahr des Liedes
             j='jahr', 
-            mel='mel',
+            mel='mel',#Autor der Melodie
             melodie='mel',
             weise='mel',
-            melj='meljahr',
+            melj='meljahr',#Jahr der Melodie
             meljahr='meljahr',
             weisej='meljahr',
             weisejahr='meljahr',
-            txt='txt', 
+            txt='txt', #Autor des Textes
             text='txt', 
             worte='txt',
-            txtj='txtjahr',
+            txtj='txtjahr', #Jahr des Textes
             textj='txtjahr',
             txtjahr='txtjahr',
             textjahr='txtjahr', 
             wortejahr='txtjahr', 
             wortej='txtjahr', 
-            alb = 'alb',
+            alb = 'alb', #Album, auf dem das Lied erschienen ist.
             album ='alb',
-            lager = 'lager',
-            bo='bo',
+            lager = 'lager', # Lager, auf dem / für das das Lied geschrieben
+            tonart='tonart', # originaltonart
+            key='tonart',
+            bo='bo', # Seite im Bock
             bock='bo',
-            vq = 'vq',
-            vasquaner='vq',
-            biest='biest',
-            tf = 'tf', 
-            turmfalke = 'tf',
-            gb = 'gb',
-            gnorkenbüdel = 'gb',
-            gnorken = 'gb',
-            hvp = 'hvp',
-            tb ='tb',
-            burgundi ='tb',
-            tarmina ='tb',
-            hk = 'hk',
-            holz = 'hk',
-            holzknopp = 'hk'
-        )
+            pf1='pfi', # Seite im Pfadiralala1
+            pfi='pfi', 
+            pf='pfi',
+            pf2='pfii', #Seite im Pfadiralala2
+            pfii='pfii',
+            pf3='pfiii', #Seite im Pfadiralala3
+            pfiii='pfiii',
+            ju='ju', # Seite in der Jurtenburg
+            jurten='ju',
+            jurtenburg='ju', 
+            gruen='gruen', # Seite Im Grünen (Liederbuch)
+            grün='gruen',
+            gruenes='gruen',
+            grünes='gruen',
+            kss4='kssiv', # Seite in Kinder-Schoko-Songs 4
+            kssiv='kssiv',
+            kssiiii='kssiv',
+            siru='siru', #Seite in Die singende Runde
+            biest='biest', #Seite im Biest
+            eg ='eg', # Seite im evangelischen Gesangbuch
+            evg ='eg',
+            egplus='egplus', #Seite Im evangelischen Gesangbuch +
+            evgplus='egplus')
+        # Weiter Seite im evangelischen Gesangbuch plus, umständliche codeschreibseise. um das Pluszeichen zu unterstützen
+        metakeys['eg+'] = 'egplus'
+        metakeys['evg+'] = 'egplus'
+        
         for line in metatext:
             if ':' in line:
                 #davor ist der schlüssel, danach der wert

@@ -5,7 +5,8 @@ import re
 _typen = dict(Überschrift='Überschrift', Leer='Leer', Akkordzeile='Akkordzeile', Textzeile='Textzeile',
               Info='Info', none=None)
 
-_Ueber_starts = set('wuw jahr j mel melodie weise melj meljahr txt worte text txtj wortej wortejahr textj txtjahr textjahr alb album lager bo bock vq vasquaner biest tf turmfalke gb gnorkenbüdel gnorken hvp tb burgundi tarmina hk holz holzknopp'.split())
+# Alle attributnamen, die in der überschrift erlaubt sind.
+_Ueber_starts = set('ww wuw  jahr j  mel melodie weise  melj meljahr weisej weisejahr  txt worte text  txtj wortej wortejahr textj txtjahr textjahr  alb album  lager  tonart key  bo bock  pf1 pfi pf  pf2 pfii  pf3 pfiii  ju jurten jurtenburg  gruen grün gruenes grünes  kss4 kssiv kssiiii  siru  biest  eg evg  eg+ evg+ egplus evgplus'.split())
 
 # Regex - Ausdrücke, die für die erkennung gebraucht werden.
 akkord_zeilen_regex = r'( *([:|]+|(\(?([A-Ha-h](#|b)?(sus|dim|add|maj)?\d*)(\/([A-Ha-h](#|b)?(sus|dim|add|maj)?\d*))*\)?)))+ *'
